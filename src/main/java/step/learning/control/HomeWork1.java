@@ -11,7 +11,7 @@ public class HomeWork1 {
 
         System.out.print("----- start Реалізувати виведення таблиці множення  \n");
 
-
+//test commit2
         System.out.print("     | 2 | 3 | 4 | 5 | 6 | 7 | 8| 9 | 10|\n");
         System.out.print("     _________________________________________\n");
         for(int i=0;i<arr1.length;i++)
