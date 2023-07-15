@@ -1,6 +1,6 @@
 package step.learning.oop;
 
-public class Literature {
+public abstract class Literature {
 
     private  String title;
 
@@ -11,4 +11,6 @@ public class Literature {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public abstract String getCard();
 }
