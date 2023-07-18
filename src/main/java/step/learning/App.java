@@ -1,6 +1,7 @@
 package step.learning;
 
 import step.learning.control.ControlDemo;
+import step.learning.file.FileDemo;
 import step.learning.oop.Library;
 
 /**
@@ -66,6 +67,7 @@ public class App
     {
 
         //new ControlDemo().run();
-        new Library().showCatalog();
+        //new Library().showCatalog();
+        new FileDemo().run();
     }
 }
