@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class Newspaper extends Literature implements Periodic{
     private Date date;
+    private String type="Newspaper";
     private static final SimpleDateFormat dateFormat =new SimpleDateFormat("dd.MM.yyyy");
 
     public Newspaper(String title,Date date) {

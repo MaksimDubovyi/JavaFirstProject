@@ -7,7 +7,7 @@ public class Journal extends Literature implements Copyable,Periodic{
         super.setTitle(title);
     }
     private  int number;
-
+    private String type="Journal";
     public int getNumber() {
         return number;
     }

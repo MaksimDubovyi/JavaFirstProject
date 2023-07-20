@@ -2,7 +2,7 @@ package step.learning.oop;
 
 public class Booklet extends Literature{
     private String publisher;
-
+    private String type="Booklet";
     public String getPublisher() {
         return publisher;
     }

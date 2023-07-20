@@ -2,16 +2,83 @@ package step.learning.file;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import step.learning.oop.Book;
+import step.learning.oop.*;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
 
 public class GsonDemo {
 
+
+    public void SaveLibrary(Library library)
+    {
+
+
+        Gson gson=new GsonBuilder()   // Builder - створює серіалізатор із додатковими налаштуваннями
+                .serializeNulls()      // значення  null будуть додаватись до результату
+                .setPrettyPrinting()   // форматування виведення - відступів та рядків
+                .create();
+
+        String literature=gson.toJson(library);
+
+        System.out.println(literature);
+        try(FileWriter writer=new FileWriter("Library.txt")) //створення файлу та запис в нього
+        {
+            writer.write(literature);
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
+    public void LoadLibrary()
+    {
+
+        Gson gson=new GsonBuilder()   // Builder - створює серіалізатор із додатковими налаштуваннями
+                .registerTypeAdapter(Literature.class, new LiteratureDeserializer())     //використовується для реєстрації кастомного десеріалізатора
+                                                                                         // LiteratureDeserializer для класу Literature під час роботи з бібліотекою Gson.
+                .serializeNulls()      // значення  null будуть додаватись до результату
+                .setPrettyPrinting()   // форматування виведення - відступів та рядків
+                .create();
+
+        try(FileReader reader=new FileReader("Library.txt");Scanner scanner =new Scanner(reader)) //читання з файлу
+        {
+            String str="";
+            while (scanner.hasNext())                                                     // Читаю файл в String
+            {  str+=scanner.nextLine(); }
+
+            LoadLibrary literature =gson.fromJson(str,  LoadLibrary.class);               // Десеріалізація  String в LoadLibrary
+            List<Literature> funds=literature.getFunds();                                 //
+
+            for(Literature literatur:funds)                                               // Проходжу по  List<Literature> funds і
+            {                                                                             // визначаю тип
+                if(literatur instanceof Books)
+                    System.out.println("____________________________________________________\nПривіт я Books:\n"+literatur.getCard());
+                else if(literatur instanceof Journal)
+                    System.out.println("____________________________________________________\nПривіт я Journal:\n"+literatur.getCard());
+                else if(literatur instanceof Newspaper)
+                    System.out.println("____________________________________________________\nПривіт я Newspaper:\n"+literatur.getCard());
+                else if(literatur instanceof Hologram)
+                    System.out.println("____________________________________________________\nПривіт я Hologram:\n"+literatur.getCard());
+                else if(literatur instanceof Poster)
+                    System.out.println("____________________________________________________\nПривіт я Poster:\n"+literatur.getCard());
+            }
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+
+    }
     public  void run2()
     { Gson gson2=new GsonBuilder()   // Builder - створює серіалізатор із додатковими налаштуваннями
             .serializeNulls()      // значення  null будуть додаватись до результату

@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class Hologram  extends Literature implements Expo{
     private Date date;
+    private String type="Hologram";
     private static final SimpleDateFormat dateFormat =new SimpleDateFormat("dd.MM.yyyy");
     public Date getDate() {
         return date;

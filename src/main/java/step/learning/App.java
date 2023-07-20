@@ -66,12 +66,15 @@ public class App
 {
     public static void main( String[] args )
     {
-
+     Library library = new Library();
         //new ControlDemo().run();
         //new Library().showCatalog();
         //new FileDemo().run();
         //new GsonDemo().run();
         //new GsonDemo().run1();
-        new GsonDemo().run2();
+        //new GsonDemo().run2();
+        new GsonDemo().SaveLibrary(library);
+        new GsonDemo().LoadLibrary();
+
     }
 }

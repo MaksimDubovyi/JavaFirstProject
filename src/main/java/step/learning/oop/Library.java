@@ -3,7 +3,7 @@ package step.learning.oop;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.time.LocalDate;
 public class Library
 {
 private List<Literature> funds;
@@ -12,7 +12,7 @@ private List<Literature> funds;
         funds=new ArrayList<>();
         funds.add(new Book("Art of Programming", "D. Knuth"));
         funds.add(new Journal("Nature", 123));
-        funds.add(new Newspaper("Daily Mail", new Date(2022-1900, 11-1, 20)));
+        funds.add(new Newspaper("Daily Mail", new Date(2000-1900, 4-1, 10)));
         funds.add(new Hologram("Cat", new Date(2000-1900, 4-1, 10)));
         funds.add(new Hologram("Dog", new Date(2002-1900, 2-1, 2)));
         funds.add(new Poster("Экстремальное программирование", "Книга о тестировании программы до написания. Автор делится приемами, паттернами и рефакторингами с пользованием методики «разработка на тестировании». Книга подходит, если хотите заниматься программированием в удовольствие."));

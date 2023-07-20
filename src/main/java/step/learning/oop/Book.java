@@ -2,6 +2,7 @@ package step.learning.oop;
 
 public class Book extends Literature implements Copyable,Books{
     private String  author;
+    private String type="Book";
 
     public String getAuthor() {
         return author;
