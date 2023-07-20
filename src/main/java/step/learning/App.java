@@ -2,6 +2,7 @@ package step.learning;
 
 import step.learning.control.ControlDemo;
 import step.learning.file.FileDemo;
+import step.learning.file.GsonDemo;
 import step.learning.oop.Library;
 
 /**
@@ -68,6 +69,9 @@ public class App
 
         //new ControlDemo().run();
         //new Library().showCatalog();
-        new FileDemo().run();
+        //new FileDemo().run();
+        //new GsonDemo().run();
+        //new GsonDemo().run1();
+        new GsonDemo().run2();
     }
 }
