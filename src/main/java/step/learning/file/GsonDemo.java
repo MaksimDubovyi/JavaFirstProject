@@ -52,11 +52,11 @@ public class GsonDemo {
 
         try(FileReader reader=new FileReader("Library.txt");Scanner scanner =new Scanner(reader)) //читання з файлу
         {
-            String str="";
+            StringBuilder str=new StringBuilder();
             while (scanner.hasNext())                                                     // Читаю файл в String
-            {  str+=scanner.nextLine(); }
-
-            LoadLibrary literature =gson.fromJson(str,  LoadLibrary.class);               // Десеріалізація  String в LoadLibrary
+            {  str.append(scanner.nextLine());}
+String st=str.toString();
+            LoadLibrary literature =gson.fromJson(st,  LoadLibrary.class);               // Десеріалізація  String в LoadLibrary
             List<Literature> funds=literature.getFunds();                                 //
 
             for(Literature literatur:funds)                                               // Проходжу по  List<Literature> funds і

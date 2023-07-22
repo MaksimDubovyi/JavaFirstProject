@@ -1,6 +1,7 @@
 package step.learning;
 
 import step.learning.control.ControlDemo;
+import step.learning.db.DbDemo;
 import step.learning.file.FileDemo;
 import step.learning.file.GsonDemo;
 import step.learning.oop.Library;
@@ -73,8 +74,9 @@ public class App
         //new GsonDemo().run();
         //new GsonDemo().run1();
         //new GsonDemo().run2();
-        new GsonDemo().SaveLibrary(library);
-        new GsonDemo().LoadLibrary();
+        //new GsonDemo().SaveLibrary(library);
+        //new GsonDemo().LoadLibrary();
+        new DbDemo().run();
 
     }
 }

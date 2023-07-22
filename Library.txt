@@ -1,9 +1,11 @@
 {
   "funds": [
     {
+     "type": "Book",
+     "data":{
       "author": "D. Knuth",
-      "type": "Book",
       "title": "Art of Programming"
+      }
     },
     {
       "number": 123,
