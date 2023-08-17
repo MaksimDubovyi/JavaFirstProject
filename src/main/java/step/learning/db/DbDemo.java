@@ -1,11 +1,16 @@
 package step.learning.db;
 import org.json.JSONObject;
+import step.learning.db.dao.RecordDao;
+import step.learning.db.dto.Record;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class DbDemo {
     private  int rangeFrom=0;
@@ -16,6 +21,7 @@ public class DbDemo {
     private String password;
     private  com.mysql.cj.jdbc.Driver mysqlDriver;
     private  java.sql.Connection connection;
+    private RecordDao recordDao;
     public  void run()
     {
         System.out.println("_______________Database Demo_____________________");
@@ -34,10 +40,16 @@ public class DbDemo {
         {
             return ;
         }
-
+        recordDao= new RecordDao(random,connection);
 
         //Створення таблиці для об'єкта якщо вона не існує, то вона буде створена
-        ensureCreated();
+        if(recordDao.ensureCreated())
+        {
+            System.out.println("Ensure OK");
+        }
+
+
+
 
 
         useDb();
@@ -67,7 +79,7 @@ public class DbDemo {
                         selectObjectId();
                         break;
                     case 4:
-                        selectObjects();
+                        showAll();
                         break;
                     case 5:
                         ShowCount();
@@ -94,25 +106,16 @@ public class DbDemo {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Введіть id: ");
 
-        String sql = "DELETE FROM jpu121_randoms WHERE id= '"+scanner.nextLine()+"'";
+        boolean res=recordDao.deleteRecordById(UUID.fromString(scanner.nextLine()));
 
-        try(Statement statement = this.connection.createStatement()) //ADO.NET : SqlCommand
-        {
-            int rowsDeleted = statement.executeUpdate(sql);
-
-            if (rowsDeleted > 0) {
+            if (res) {
                 System.out.println("Об'єкт успішно видалено.");
             } else {
                 System.out.println("Об'єкт з вказаним id не знайдено. Видалення не виконано.");
             }
 
-            System.out.println(sql + "\n_________________________________________________________________________________________________________________");
+            System.out.println( "\n_________________________________________________________________________________________________________________");
 
-        }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
     }
 
     /**
@@ -123,143 +126,99 @@ public class DbDemo {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Введіть id: ");
 
-        String sql = "SELECT * FROM jpu121_randoms WHERE id= '"+scanner.nextLine()+"'";
+        Record record =recordDao.getById(UUID.fromString(scanner.nextLine()));
+        System.out.println(record);
 
-        try(Statement statement = this.connection.createStatement()) //ADO.NET : SqlCommand
-        {
-            ResultSet resultSet = statement.executeQuery(sql);
-            if (resultSet.next()) {
-                System.out.println("Об'єкт успішно знайдено.");
-                String id = resultSet.getString("id");
-                int val_int = resultSet.getInt("val_int");
-                String val_str = resultSet.getString("val_str");
-                float val_float = resultSet.getFloat("val_float");
 
-                System.out.println("id: " + id + ", val_int: " + val_int + ", val_str: " + val_str + ", val_float: " + val_float);
-            } else {
-                System.out.println("Об'єкт з вказаним id не знайдено.");
-            }
-
-            System.out.println("\n_________________________________________________________________________________________________________________");
-
+        if(record!=null)
+        deleteOrUpdate(record);
+        else {
+            System.out.println("Об'єкт з вказаним id не знайдено.");
         }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
+        System.out.println("\n_________________________________________________________________________________________________________________");
     }
+private void deleteOrUpdate(Record record)
+{
+    do {
 
+        int choice= IntCheck("Оберіть операцію:\n1# Видалення обєкта:\n2#: Редагування обєкта");
+
+        if (choice<3&&choice>0)
+        {
+            switch (choice)
+            {
+                case 1:
+                    deleteRecord(record);
+                    break;
+                case 2:
+                    updateRecord(record);
+                    break;
+            }
+        }
+        else
+        {
+            System.out.println("Некорректний ввід.");
+        }
+    } while (true);
+}
+ private void deleteRecord(Record record)
+ {
+     boolean res= recordDao.delete(record);
+
+     if (res) {
+         System.out.println("Об'єкт успішно видалено.");
+     } else {
+         System.out.println("Об'єкт з вказаним id не знайдено. Видалення не виконано.");
+     }
+
+     System.out.println( "\n_________________________________________________________________________________________________________________");
+ }
+ private  void updateRecord(Record record)
+ {
+         String val_str=getStr();
+         float val_float =FloatCheck();
+         int val_int=IntCheck("Введіть val_int:");
+         Record recordNew=new Record(val_int,val_str,val_float);
+         recordNew.setId(record.getId());
+
+          boolean res= recordDao.update(recordNew);
+
+            if (res) {
+                 System.out.println("Об'єкт успішно оновлено.");
+          } else {
+                 System.out.println("Об'єкт з вказаним id не знайдено. Оновлення не виконано.");
+              }
+     System.out.println( "\n_________________________________________________________________________________________________________________");
+ }
     /**
      *Перегляд всіх об'єктів з таблиці jpu121_randoms
      */
-    private void  selectObjects()
-    {
-        String sql = "SELECT * FROM jpu121_randoms";
-
-        try(Statement statement = this.connection.createStatement()) //ADO.NET : SqlCommand
-        {
-            ResultSet res = statement.executeQuery(sql);
-            int i=1;
-            while (res.next()) {
-                System.out.printf(
-                        "%d) id - (%s) val_int - (%d) val_str - (%s) val_float - (%f)  %n",
-                        i,
-                        res.getString("id") ,
-                        res.getInt("val_int"),
-                        res.getString("val_str"),
-                        res.getFloat("val_float")
-                );
-                i++;
-            }
-            res.close();
-            System.out.println("_________________________________________________________________________________________________________________");
+    private void showAll() {
+        List<Record> records = recordDao.getAll() ;
+        if( records == null ) {
+            System.out.println( "Error getting list" ) ;
         }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
+        else {
+            for( Record record : records ) {
+                System.out.println( record ) ;
+            }
         }
     }
 
-    /**private void showRandoms() {
-        String sql = "SELECT `id`, `val_int`, `val_str`,`val_float` FROM jpu121_randoms" ;   // ';' у кінці SQL команди не потрібна
-        try( Statement statement = this.connection.createStatement() ) {
-            ResultSet res = statement.executeQuery( sql ) ;  // ADO ~ SqlDataReader
-            // ResultSet res - об'єкт для трансферу даних, що є результатом запиту
-            // Особливість БД - робота з великими даними, що означає відсутність
-            // єдиного результату, та одержання даних рядок-за-рядком (ітерування)
-            // res.next() - одержання нового рядка (якщо є - true, немає - false)
-            while( res.next() ) {
-                System.out.printf(
-                        "%s %d %n",
-                        // дані рядку доступні через get-тери
-                        res.getString( 1 ) ,      // !!! у JDBC відлік починається з 1 !!!
-                        res.getInt( "val_int" )   // за іменем колонки
-                );
-            }
-            res.close() ;
-        }
-        catch( SQLException ex ) {
-            System.err.println( ex.getMessage() ) ;
-        }
-    }**/
 
-    private void insertPrepared(int rowCount)
-    {
-        /**
-             Підготовлені (prepared) запити - можна вважати тимчасовими збережними процедурами
-         (скомпільовані запити, які зберігаються у СУБД)
-             Ідея - запит компілюється і скомпільований код зберігається у СУБД протягом відкритого
-         зєднання. Протягом цього часу запит можна повторити, у т.ч. з іншими параметрами
-         (за що їх також називають параметризованими запитами)
-         **/
-        String sql = "INSERT INTO jpu121_randoms(`id`, `val_int`, `val_str`, `val_float`) VALUES( UUID(), ?, ?, ?)";
-        /**
-         Місці для варіативних даних змінюються на ?, не змінні дані (як то UUID())залишається у
-         запиті. Якщо значення беруться у лапки то знак ?  всеодно без лапок.
-         **/
-        try(PreparedStatement prep = this.connection.prepareStatement(sql))
-        {
-            /**
-             На другому етапі (після підготовки - створення тимчасової процедури)
-             здійснюється заповнення параметрів
-             * **/
-            for (int i =0; i<rowCount; i++) {
-                prep.setInt(1, random.nextInt(1000));
-                prep.setString(2, random.nextInt() + "");
-                prep.setDouble(3, random.nextDouble());
-
-                /**
-                 Трктій етап виконання
-                 **/
-                prep.execute();
-            }
-        }
-        catch (SQLException ex)
-        {
-            System.err.println(ex.getMessage());
-        }
-    }
 private  void ShowCount()
 {
-    try(PreparedStatement prep = this.connection.prepareStatement("SELECT COUNT(id) FROM jpu121_randoms" ))
+    int cnt = recordDao.getCount();
+    if(cnt==-1)
     {
-        ResultSet res = prep.executeQuery();
-        res.next();
-        System.out.println("Count" + res.getInt(1));
-        /*        Java                                                  DB
-   prepareStatement                                           proc_tmp() {
-"SELECT COUNT(id) FROM jpu121_randoms"     ---------------->    return SELECT COUNT(id) FROM jpu121_randoms }
-   res = prep.executeQuery()               ----------------> CALL proc_tmp() --> Iterator#123
-       (res==Iterator#123)               <-- Iterator#123 --
-   res.next()                              ---------------->   Iterator#123.getNext() - береться 1й рядок
-                                        <-- noname: 7 ------
-   res.getInt( 1 ) - 7
- */
+        System.out.println("Counter error ");
     }
-    catch (SQLException ex)
-    {
-        System.err.println(ex.getMessage());
+    else {
+        System.out.println("Rows count: "+ cnt);
     }
+
+
+
 }
 private void rowsCountInSegment()
 {
@@ -456,17 +415,8 @@ private  void ShowRange()
            String val_str=getStr();
            float val_float =FloatCheck();
            int val_int=IntCheck(intStr);
-           String sql = "INSERT INTO jpu121_randoms(`id`, `val_int`, `val_str`, `val_float`) VALUES( UUID(), " + val_int + ", '" + val_str + "', " + val_float + ")";
-
-           try(Statement statement = this.connection.createStatement()) //ADO.NET : SqlCommand
-           {
-               statement.executeUpdate(sql); //executeUpdate -для запитів без повернення
-               System.out.println(sql+"\n_________________________________________________________________________________________________________________");
-           }
-           catch (SQLException ex)
-           {
-               System.out.println(ex.getMessage());
-           }
+           Record record=new Record(val_int,val_str,val_float);
+           recordDao.create(record);
        }
         System.out.println("Вітання об'єкти додані до бази успішно!");
 
@@ -480,50 +430,32 @@ private  void ShowRange()
         String countStr="Скільки ви бажаєте додати об'єктів в таблицю? ";
 
         int Count= IntCheck(countStr);
-
-            this.insertPrepared(Count);
-//            float val_float =random.nextInt(101);
-//            int val_int=random.nextInt(101);
-//            String val_str="val_int: "+val_int+" val_float: "+val_float;
-//
-//            String sql = "INSERT INTO jpu121_randoms(`id`, `val_int`, `val_str`, `val_float`) VALUES( UUID(), " + val_int + ", '" + val_str + "', " + val_float + ")";
-//
-//            try(Statement statement = this.connection.createStatement()) //ADO.NET : SqlCommand
-//            {
-//                statement.executeUpdate(sql); //executeUpdate -для запитів без повернення
-//                System.out.println(sql+"\n_________________________________________________________________________________________________________________");
-//            }
-//            catch (SQLException ex)
-//            {
-//                System.out.println(ex.getMessage());
-//            }
-
+        recordDao.insertPrepared(Count);
         System.out.println("Вітання об'єкти додані до бази успішно!");
-
     }
 
     /**
      * Створення таблиці для об'єкта якщо вона не існує, то вона буде створена
      */
-    private void  ensureCreated() ///IF NOT EXISTS пишеться для перевірки е таблиця чи ні якщо є то створюватись не буде
-    {
-        String sql="CREATE TABLE IF NOT EXISTS jpu121_randoms("+
-                "`id`        CHAR(36) PRIMARY KEY,"+
-                "`val_int`   INT,"+
-                "`val_str`   VARCHAR(256),"+
-                "`val_float` FLOAT"+
-                ")";
-
-        try(Statement statement = this.connection.createStatement()) //ADO.NET : SqlCommand
-        {
-         statement.executeUpdate(sql); //executeUpdate -для запитів без повернення
-            System.out.println("OK");
-        }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
-    }
+//    private void  ensureCreated() ///IF NOT EXISTS пишеться для перевірки е таблиця чи ні якщо є то створюватись не буде
+//    {
+//        String sql="CREATE TABLE IF NOT EXISTS jpu121_randoms("+
+//                "`id`        CHAR(36) PRIMARY KEY,"+
+//                "`val_int`   INT,"+
+//                "`val_str`   VARCHAR(256),"+
+//                "`val_float` FLOAT"+
+//                ")";
+//
+//        try(Statement statement = this.connection.createStatement()) //ADO.NET : SqlCommand
+//        {
+//         statement.executeUpdate(sql); //executeUpdate -для запитів без повернення
+//            System.out.println("OK");
+//        }
+//        catch (SQLException ex)
+//        {
+//            System.out.println(ex.getMessage());
+//        }
+//    }
 
     /**
      * Читання файлу appsetings.json в StringBuilder і при поверненні перетворюємо його в JSONObject
@@ -581,6 +513,34 @@ private  void ShowRange()
         catch (SQLException ignored) { }
 
     }
+
+
+    /*
+    DTO, DAO
+    DTO- Data Transfer Object - обєкт для передачі даних - структураб яка
+    містить поля (або властивості), їх аксесори, конструктори та утіліти
+    (toString(), toJson(), тощо). Не містить логіку. Аналог -сутності(Entity)
+
+    DAO - Data Access Object - обє'кт доступу до даних - логіка роботи з
+    об'єктами DTO. Аналог LINQ
+
+    Наприклад
+
+    UserDTO
+    {
+    private UUID id;
+    private string name;
+
+    public UUID getId();
+    public string getName();
+    }
+
+    UerDAO
+    {
+    public UserDTO getUserById(UUID id){.....}
+    }
+
+    */
 }
 /*
 Робота з базами даних. JDBC
