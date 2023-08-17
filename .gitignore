@@ -14,7 +14,7 @@ appsetings.json
 *.iws
 *.iml
 *.ipr
-
+appsetings.json
 ### Eclipse ###
 .apt_generated
 .classpath
