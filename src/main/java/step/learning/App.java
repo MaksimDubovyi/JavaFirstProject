@@ -1,9 +1,15 @@
 package step.learning;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import step.learning.control.ControlDemo;
 import step.learning.db.DbDemo;
 import step.learning.file.FileDemo;
 import step.learning.file.GsonDemo;
+import step.learning.hash.AppHash;
+import step.learning.hash.HashConfigModule;
+import step.learning.ioc.ConfigModule;
+import step.learning.ioc.IocApp;
 import step.learning.oop.Library;
 
 /**
@@ -76,7 +82,17 @@ public class App
         //new GsonDemo().run2();
         //new GsonDemo().SaveLibrary(library);
         //new GsonDemo().LoadLibrary();
-        new DbDemo().run();
+        //new DbDemo().run();
+
+        Injector injector = Guice.createInjector(
+          //модулі конфігурації - довільна кількість
+                new ConfigModule(), new HashConfigModule()
+        );
+        IocApp app= injector.getInstance(IocApp.class); // Resolve
+        app.run(); //Передача управління головному класу
+
+        AppHash appHash= injector.getInstance(AppHash.class); // Resolve
+        appHash.run(); //Передача управління головному класу
 
     }
 }

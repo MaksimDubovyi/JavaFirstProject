@@ -29,7 +29,7 @@ public class DbDemo {
 
         JSONObject dbConf=conf
                 .getJSONObject("DataProviders")  //Заглиблюємося в PlanetScale
-                .getJSONObject("PlanetScale");   // отримувати об'єкт PlanetScale
+                .getJSONObject("PlanetScale");   // отримувати об'єкт PlanetScale9
 
         //Заповнюємо поля з об'єкту dbConf
          url=dbConf.getString("url");
@@ -437,25 +437,7 @@ private  void ShowRange()
     /**
      * Створення таблиці для об'єкта якщо вона не існує, то вона буде створена
      */
-//    private void  ensureCreated() ///IF NOT EXISTS пишеться для перевірки е таблиця чи ні якщо є то створюватись не буде
-//    {
-//        String sql="CREATE TABLE IF NOT EXISTS jpu121_randoms("+
-//                "`id`        CHAR(36) PRIMARY KEY,"+
-//                "`val_int`   INT,"+
-//                "`val_str`   VARCHAR(256),"+
-//                "`val_float` FLOAT"+
-//                ")";
-//
-//        try(Statement statement = this.connection.createStatement()) //ADO.NET : SqlCommand
-//        {
-//         statement.executeUpdate(sql); //executeUpdate -для запитів без повернення
-//            System.out.println("OK");
-//        }
-//        catch (SQLException ex)
-//        {
-//            System.out.println(ex.getMessage());
-//        }
-//    }
+
 
     /**
      * Читання файлу appsetings.json в StringBuilder і при поверненні перетворюємо його в JSONObject
