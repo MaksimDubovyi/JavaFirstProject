@@ -64,7 +64,7 @@ public class IocApp {
    {
 
       if(this.random2!=null)
-         logger.log(Level.INFO,"Служба random2 ініціалізована");
+         logger.log(Level.INFO,"Служба random2 ініціалізована" );
       else
          logger.log(Level.SEVERE,"Служба random2 NULL");
 
