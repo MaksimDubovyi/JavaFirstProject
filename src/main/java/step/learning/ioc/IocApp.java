@@ -3,6 +3,10 @@ package step.learning.ioc;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class IocApp {
 
    /*@Inject
@@ -20,23 +24,76 @@ public class IocApp {
 
    private final PartingService goodbyeServise;
 
+   private final Random random;
+   @Inject @Named("planetConnection")  // Можлива змішана інжекція і через конструктор
+   private String connectionString;    // і через поля- обидві працюють одночасно
+   @Inject @Named("logFileName")
+   private String logFileName;
+
+   @Inject @Named("java.util")
+   private   Random random2;
+
+   private final Logger logger; // Guice автоматично постачає Logger(java.util)
    @Inject
-   public IocApp(GreetingService helloService, @Named("bye") PartingService byeService,@Named("goodbye") PartingService goodbyeService )
+   public IocApp(GreetingService helloService, @Named("bye") PartingService byeService,@Named("goodbye") PartingService goodbyeService, @Named("java.util") Random random,Logger logger )
    {
       this.helloService = helloService;
       this.byeServise = byeService;
       this.goodbyeServise = goodbyeService;
+      this.random=random;
+      this.logger=logger;
+
    }
 
    public void run() {
+      checkingAllInjectedServices();
       System.out.println( "App works" ) ;
-
       //один інтерфейс одна  реалізація
       helloService.sayHello() ;
+      System.out.println(connectionString);
+      System.out.println(logFileName);
+      System.out.println(random.nextInt(100));
+      System.out.println(random.hashCode() +" "+ random2.hashCode());
 
       //один інтерфейс дві реалізації  (в файлі конфігурацій див )
       byeServise.sayGoodbye();
       goodbyeServise.sayGoodbye();
+
+   }
+   private void checkingAllInjectedServices()
+   {
+
+      if(this.random2!=null)
+         logger.log(Level.INFO,"Служба random2 ініціалізована");
+      else
+         logger.log(Level.SEVERE,"Служба random2 NULL");
+
+      if(this.random!=null)
+         logger.log(Level.INFO,"Служба random ініціалізована");
+      else
+         logger.log(Level.SEVERE,"Служба random NULL");
+
+      if(this.logFileName!=null)
+         logger.log(Level.INFO,"Служба logFileName ініціалізована");
+      else
+         logger.log(Level.SEVERE,"Служба logFileName NULL");
+
+      if(this.byeServise!=null)
+         logger.log(Level.INFO,"Служба byeServise ініціалізована");
+      else
+         logger.log(Level.SEVERE,"Служба byeServise NULL");
+
+      if(this.goodbyeServise!=null)
+         logger.log(Level.INFO,"Служба goodbyeServise ініціалізована");
+      else
+         logger.log(Level.SEVERE,"Служба goodbyeServise NULL");
+
+      if(this.helloService!=null)
+         logger.log(Level.INFO,"Служба helloService ініціалізована");
+      else
+         logger.log(Level.SEVERE,"Служба helloService NULL");
+
+
    }
 }
 /**

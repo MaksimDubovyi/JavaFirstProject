@@ -1,7 +1,9 @@
 package step.learning.hash;
 
+import com.google.inject.Singleton;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
+@Singleton
 public class Argon2HashService implements IHashservice {
     @Override
     public String GetHash(String text) {

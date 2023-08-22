@@ -11,6 +11,7 @@ import step.learning.hash.HashConfigModule;
 import step.learning.ioc.ConfigModule;
 import step.learning.ioc.IocApp;
 import step.learning.oop.Library;
+import step.learning.threading.ThreadDemo;
 
 /**
  /*
@@ -73,7 +74,7 @@ public class App
 {
     public static void main( String[] args )
     {
-     Library library = new Library();
+     //Library library = new Library();
         //new ControlDemo().run();
         //new Library().showCatalog();
         //new FileDemo().run();
@@ -91,8 +92,10 @@ public class App
         IocApp app= injector.getInstance(IocApp.class); // Resolve
         app.run(); //Передача управління головному класу
 
-        AppHash appHash= injector.getInstance(AppHash.class); // Resolve
-        appHash.run(); //Передача управління головному класу
+       // AppHash appHash= injector.getInstance(AppHash.class); // Resolve
+        //appHash.run(); //Передача управління головному класу
+
+       injector.getInstance(ThreadDemo.class).run(); // Resolve
 
     }
 }
