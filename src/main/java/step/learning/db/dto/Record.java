@@ -33,13 +33,7 @@ public class Record
 
     @Override
     public String toString() {
-        return String.format(
-                "{id: '%s', valInt: %d , valStr '%s', valFloat: %f}",
-                getId(),
-                getValInt(),
-                getValStr(),
-                getValFloat()
-        );
+        return String.format("{id: '%s', valInt: %d , valStr '%s', valFloat: %f}", getId(), getValInt(), getValStr(),  getValFloat() );
     }
 
     private  double valFloat;

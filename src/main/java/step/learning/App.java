@@ -11,6 +11,7 @@ import step.learning.hash.HashConfigModule;
 import step.learning.ioc.ConfigModule;
 import step.learning.ioc.IocApp;
 import step.learning.oop.Library;
+import step.learning.threading.PercentDemo;
 import step.learning.threading.ThreadDemo;
 
 /**
@@ -89,13 +90,13 @@ public class App
           //модулі конфігурації - довільна кількість
                 new ConfigModule(), new HashConfigModule()
         );
-        IocApp app= injector.getInstance(IocApp.class); // Resolve
-        app.run(); //Передача управління головному класу
+        //IocApp app= injector.getInstance(IocApp.class); // Resolve
+       // app.run(); //Передача управління головному класу
 
        // AppHash appHash= injector.getInstance(AppHash.class); // Resolve
         //appHash.run(); //Передача управління головному класу
 
-       injector.getInstance(ThreadDemo.class).run(); // Resolve
-
+       //injector.getInstance(ThreadDemo.class).run(); // Resolve
+        injector.getInstance(PercentDemo.class).run(); // Resolve
     }
 }
