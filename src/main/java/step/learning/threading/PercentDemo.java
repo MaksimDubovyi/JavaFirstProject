@@ -15,9 +15,52 @@ public class PercentDemo {
 
     // Багатозадачність починається з налаштування вмконавця, яким, частіше за все.
     // є пул з граничною кількістю одночасно працюючих  потоків
-    private final ExecutorService pool= Executors.newFixedThreadPool(5);
+    private final ExecutorService pool= Executors.newFixedThreadPool(6);
 
-    public  void  runq() {
+    public void run()
+    {
+        sum = 100 ;
+        int months = 12;
+        for (int i = 0; i < months; i++)
+           Percent(i+1);
+
+        try {
+            // очікуємо завершення усіх задач але не довше часового обмеження
+               pool.awaitTermination(2, TimeUnit.SECONDS);
+            }
+        catch (InterruptedException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        pool.shutdown();
+
+        System.out.println( "Final sum: " + sum ) ;
+    }
+    Future<?>Percent(int month)
+    {
+        return  pool.submit(()->{
+
+            double localSum;
+            double inflationRate;
+            // імітуємо тривалий запит до API інфляції
+            System.out.println("Month " + month + " started");
+            int receivingTime = 100; //  random.nextInt(300)+200 ; // 200-500 мс на запит
+            try {
+                Thread.sleep(receivingTime);
+            } catch (InterruptedException ex) {
+                System.err.println(ex.getMessage());
+            }
+            // уявимо, що всі проценти = 10 (1.1)
+            synchronized (sumLocker) {
+                localSum = sum;
+                inflationRate  = random.nextDouble() * 2.2;
+                sum *= inflationRate;//конкуренція одночасна робота зі спільним ресурсом
+            }
+            System.out.println( String.format("{  місяць: %d,\tсума до зміни: %.2f,\tсума після зміни: %.2f,\t відсоток: %.2f  }",month,localSum,sum,inflationRate)) ;
+        });
+    }
+
+    public  void  runPrintHello() {
         for (int i = 0; i < 15; i++) {
             printHello(i+1);
         }
@@ -34,7 +77,7 @@ public class PercentDemo {
     {
         return  pool.submit(()->{
 
-            try {Thread.sleep(500+random.nextInt(2500)); }
+            try { Thread.sleep(500+random.nextInt(2500)); }
             catch (InterruptedException ignored){}
             System.out.println("Hello "+ num);
 
@@ -72,8 +115,8 @@ public class PercentDemo {
 
      });
     }
-   // runThread
-    public void run() {
+
+    public void runThread() {
         sum = 100 ;
         int months = 12;
         Thread[] threads = new Thread[months] ;
